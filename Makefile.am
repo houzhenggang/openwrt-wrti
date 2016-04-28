@@ -1,6 +1,7 @@
 # Makefile.am for wuti
 #
 # Copyright (C) 2016
+#
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -16,11 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS =
+SUBDIRS = pywuti
 
-MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST =
 
-pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
-wutidir      = $(pkgpyexecdir)
+MAINTAINERCLEANFILES = Makefile.in install-sh missing aclocal.m4 \
+                       configure *.pyc py-compile
 
-wuti_PYTHON = $(wildcard $(srcdir)/*.py)
+CLEANFILES = *~
+
+dist_sbin_SCRIPTS = wuti.py
