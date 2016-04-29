@@ -25,7 +25,9 @@ AM_INIT_AUTOMAKE([foreign])
 AM_PATH_PYTHON([2.7])
 
 AC_CONFIG_FILES([Makefile
-                 pywuti/Makefile])
+                 pywuti/Makefile
+                 pywuti/ui/Makefile
+                 pywuti/spokes/Makefile])
 
 AC_OUTPUT
 

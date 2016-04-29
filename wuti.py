@@ -17,22 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from snack import *
+from pywuti.ui import Application
+from pywuti.spokes.welcome import WelcomeSpoke
 
-screen = SnackScreen()
+if __name__ == "__main__":
+    print("Starting installer, one moment...")
 
-ret = EntryWindow(screen, 'Title', 'My super agenda', 
-        ['name', 'lastname', 'age'])
-
-
-screen.finish()
-
-status = ret[0]
-values = ret[1]
-
-# OK or Cancel
-print "Pressed %s" % (status)
-
-# Print every single item
-for item in values:
-    print item
+    app = Application("Install Mode")
+    spoke = WelcomeSpoke(app, 'Welcome')
+    app.schedule_screen(spoke)
+    app.run()

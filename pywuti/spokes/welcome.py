@@ -1,6 +1,7 @@
-# Makefile.am for wuti
+#!/usr/bin/python
 #
 # Copyright (C) 2016
+#
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -16,11 +17,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = ui spokes
+from pywuti.ui import UIScreen, TextWidget, ColumnWidget, ButtonWidget
 
-MAINTAINERCLEANFILES = Makefile.in
-
-pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
-wutidir      = $(pkgpyexecdir)
-
-wuti_PYTHON = $(wildcard $(srcdir)/*.py)
+class WelcomeSpoke(UIScreen):
+        def __init__(self, app, title):
+            UIScreen.__init__(self, app, title)
+            
+        def setup(self):
+            wtext = TextWidget(40, 'Welcome to Openwrt')
+            self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
+            wcols = ColumnWidget(1)
+            wcols.addWidget(ButtonWidget('OK'))
+            self.addWidget(wcols)
