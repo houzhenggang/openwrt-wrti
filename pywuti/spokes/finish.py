@@ -17,23 +17,20 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pywuti.ui import Application
+import os
 
-from pywuti.spokes.welcome import WelcomeSpoke
-from pywuti.spokes.storage import StorageSpoke
-from pywuti.spokes.install import InstallSpoke
-from pywuti.spokes.finish import FinishSpoke
+from pywuti.ui import UIScreen, TextWidget, ButtonWidget
 
-if __name__ == "__main__":
-    print("Starting installer, one moment...")
+class FinishSpoke(UIScreen):
+        def __init__(self, app, title = 'Complete'):
+            UIScreen.__init__(self, app, title)
+            
+        def setup(self):
+            wtext = TextWidget(40, 'Congratulations, your Openwrt installation is complete.\n'
+                               '\nPlease reboot to use the installed system.')
+            self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
+            self.addWidget(ButtonWidget('Reboot'))
 
-    app = Application("Install Mode")
-    spoke = WelcomeSpoke(app, 'Openwrt')
-    storage = StorageSpoke(app, 'Storage')
-    install = InstallSpoke(app)
-    finsh = FinishSpoke(app)
-    app.schedule_screen(spoke)
-    app.schedule_screen(storage)
-    app.schedule_screen(install)
-    app.schedule_screen(finsh)
-    app.run()
+        def run(self, args = None):
+            UIScreen.run(args)
+            os.system('/sbin/reboot')

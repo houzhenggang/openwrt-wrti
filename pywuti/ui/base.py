@@ -78,6 +78,7 @@ class Application(object):
             try:
                 last_screen = self._screens[-1][0]
 
+                last_screen.setup()
                 last_screen.redraw()
                 last_screen.run(self._screens[-1][1])
                 last_screen.close()
@@ -205,6 +206,8 @@ class UIScreen(object):
         self._widgets = []
         self._cols = 0
         self._rows = 0
+        self._grid = None
+        
 
     @property
     def app(self):
@@ -228,20 +231,23 @@ class UIScreen(object):
         self._cols += 1
 
     def redraw(self):
-        self.setup()
+        if self._grid is None:
+            self._grid = snack.Grid(self._cols + 1, self._rows + 1)
+            self._form.add(self._grid)
+            for w in self._widgets:
+                self._grid.setField(w.widget, w.col, w.row, w.padding,
+                           w.anchorLeft, w.anchorTop, w.anchorRight, w.anchorBottom,
+                           w.growx, w.growy)
+                self._form.add(w.widget)
 
-        g = snack.Grid(self._cols + 1, self._rows + 1)
-        self._form.add(g)
-        for w in self._widgets:
-            g.setField(w.widget, w.col, w.row, w.padding,
-                       w.anchorLeft, w.anchorTop, w.anchorRight, w.anchorBottom,
-                       w.growx, w.growy)
-            self._form.add(w.widget)
-
-        self._app.screen.gridWrappedWindow(g, self._title)
+            self._app.screen.gridWrappedWindow(self._grid, self._title)
+        self._form.draw()
 
     def run(self, args = None):
         return self._form.run()
+
+    def refresh(self):
+        self._app.screen.refresh()
 
     def close(self):
         self._app.screen.popWindow()

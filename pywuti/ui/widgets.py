@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ["TextWidget", "LabelWidget", "ButtonWidget", "ColumnWidget"]
+__all__ = ["TextWidget", "TextboxWidget", "LabelWidget", "ButtonWidget",
+           "ColumnWidget", "ListWidget", "ProcessWidget"]
 
 import snack
 
@@ -27,6 +28,11 @@ class TextWidget(BaseWidget):
     def __init__(self, width, text):
         BaseWidget.__init__(self)
         self._widget = snack.TextboxReflowed(width, text)
+
+class TextboxWidget(BaseWidget):
+    def __init__(self, width, text):
+        BaseWidget.__init__(self)
+        self._widget = snack.Textbox(width, 4, text)
 
 class LabelWidget(BaseWidget):
     def __init__(self, text):
@@ -49,3 +55,19 @@ class ColumnWidget(BaseWidget):
         w.col = self._item
         self._widget.setField(w.widget, self._item, 0, (1, 0, 1, 0))
         self._item = self._item  + 1
+
+class ListWidget(BaseWidget):
+    def __init__(self, height, scroll = 0, returnExit = 0, width = 0, showCursor = 0, multiple = 0, border = 0):
+        BaseWidget.__init__(self)
+        self._widget = snack.Listbox(height, scroll, returnExit, width, showCursor, multiple, border)
+
+    def append(self, text, item):
+        self._widget.append(text, item)
+
+class ProcessWidget(BaseWidget):
+    def __init__(self, width, total):
+        BaseWidget.__init__(self)
+        self._widget = snack.Scale(width, total)
+
+    def setprocess(self, amount):
+        self._widget.set(amount)

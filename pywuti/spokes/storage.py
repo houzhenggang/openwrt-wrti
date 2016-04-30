@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pywuti.ui import Application
+from pywuti.ui import UIScreen, TextWidget, ColumnWidget, ButtonWidget, ListWidget
 
-from pywuti.spokes.welcome import WelcomeSpoke
-from pywuti.spokes.storage import StorageSpoke
-from pywuti.spokes.install import InstallSpoke
-from pywuti.spokes.finish import FinishSpoke
+class StorageSpoke(UIScreen):
+        def __init__(self, app, title):
+            UIScreen.__init__(self, app, title)
+            
+        def setup(self):
+            wtext = TextWidget(40, 'Select Storage')
+            self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
 
-if __name__ == "__main__":
-    print("Starting installer, one moment...")
+            wlist = ListWidget(10)
+            wlist.append('/dev/sda', 'sda')
+            wlist.append('/dev/sdb', 'sdb')
+            self.addWidget(wlist)
 
-    app = Application("Install Mode")
-    spoke = WelcomeSpoke(app, 'Openwrt')
-    storage = StorageSpoke(app, 'Storage')
-    install = InstallSpoke(app)
-    finsh = FinishSpoke(app)
-    app.schedule_screen(spoke)
-    app.schedule_screen(storage)
-    app.schedule_screen(install)
-    app.schedule_screen(finsh)
-    app.run()
+            wcols = ColumnWidget(2)
+            wcols.addWidget(ButtonWidget('OK'))
+            wcols.addWidget(ButtonWidget('Cancel'))
+            self.addWidget(wcols)
