@@ -32,5 +32,5 @@ class FinishSpoke(UIScreen):
             self.addWidget(ButtonWidget('Reboot'))
 
         def run(self, args = None):
-            UIScreen.run(args)
+            UIScreen.run(self, args)
             os.system('/sbin/reboot')
