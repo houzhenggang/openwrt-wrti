@@ -30,9 +30,9 @@ class TextWidget(BaseWidget):
         self._widget = snack.TextboxReflowed(width, text)
 
 class TextboxWidget(BaseWidget):
-    def __init__(self, width, text):
+    def __init__(self, width, height, text, scroll = 0, wrap = 0):
         BaseWidget.__init__(self)
-        self._widget = snack.Textbox(width, 4, text)
+        self._widget = snack.Textbox(width, height, text, scroll, wrap)
 
     def setText(self, text):
         self._widget.setText(text)

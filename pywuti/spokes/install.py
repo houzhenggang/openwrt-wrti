@@ -34,8 +34,8 @@ class InstallSpoke(UIScreen):
             self.addWidget(self._process, {'padding': (0, 1, 0, 0)})
             self._label = LabelWidget("Packages completed 184 of 255")
             self.addWidget(self._label, {'padding': (0, 1, 0, 0)})
-            self._info = TextboxWidget(65, "Installing libc-1.3.4-ipk (2K)\nA library for text mode user interfaces")
-            self.addWidget(self._info, { "wrap": 1, 'padding': (0, 1, 0, 0)})
+            self._info = TextboxWidget(65, 4, "Installing libc-1.3.4-ipk (2K)\nA library for text mode user interfaces", wrap = 1)
+            self.addWidget(self._info, {'padding': (0, 1, 0, 0)})
             
             self.setup_instroot()
             self.setup_packages()

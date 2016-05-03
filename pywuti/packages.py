@@ -123,10 +123,10 @@ class Packages(object):
             elif re.match("^Size:", line):
                 pkginfo['size'] = line.split(' ')[1]
             elif re.match("^Description:", line):
-                pkginfo['description'] = line.split(' ')[1]
+                pkginfo['description'] = line.split(' ')[1:].strip()
                 isdescription = True
             elif isdescription is True:
-                pkginfo['description'] += line
+                pkginfo['description'] += " %s" % line.strip()
 
         return pkginfo
 
