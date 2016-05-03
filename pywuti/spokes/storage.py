@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2016
+# Copyright (C) 2016 Openwrt x86_64 Unity Project
 #
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
@@ -28,8 +28,7 @@ class StorageSpoke(UIScreen):
             self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
 
             wlist = ListWidget(10)
-            wlist.append('/dev/sda', 'sda')
-            wlist.append('/dev/sdb', 'sdb')
+            wlist.append('/dev/sda', '/dev/sda')
             self.addWidget(wlist)
 
             wcols = ColumnWidget(2)

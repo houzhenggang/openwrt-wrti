@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016
+# Copyright (C) 2016 Openwrt x86_64 Unity Project
 #
 # Wei Yongjun <weiyj.lk@gmail.com>
 #

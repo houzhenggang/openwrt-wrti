@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2016
+# Copyright (C) 2016 Openwrt x86_64 Unity Project
 #
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
@@ -33,4 +33,4 @@ class FinishSpoke(UIScreen):
 
         def run(self, args = None):
             UIScreen.run(self, args)
-            os.system('/sbin/reboot')
+            #os.system('/sbin/reboot')

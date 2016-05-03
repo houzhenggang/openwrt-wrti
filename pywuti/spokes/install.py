@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2016
+# Copyright (C) 2016 Openwrt x86_64 Unity Project
 #
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
@@ -20,6 +20,7 @@
 import time
 
 from pywuti.ui import UIScreen, LabelWidget, TextboxWidget, ProcessWidget
+from pywuti.storage import Storage
 
 class InstallSpoke(UIScreen):
         def __init__(self, app, title = 'Package Installation'):
@@ -34,11 +35,31 @@ class InstallSpoke(UIScreen):
             self.addWidget(self._label, {'padding': (0, 1, 0, 0)})
             self._info = TextboxWidget(65, "Installing libc-1.3.4-ipk (2K)\nA library for text mode user interfaces")
             self.addWidget(self._info, { "wrap": 1, 'padding': (0, 1, 0, 0)})
+            
+            self.setup_instroot()
+
+        def setup_instroot(self):
+            self.storage = Storage('/dev/sda', '/mnt/sysimage')
+            self.storage.add_partition(100, '/boot', 'ext4')
+            self.storage.add_partition(200, '/', 'ext4')
+            self.storage.add_partition(200, '/var', 'ext4')
 
         def run(self, args = None):
+            self.storage.mount()
+
             while self._amount < 100:
                 self._amount = self._amount + 10
                 self._process.setprocess(self._amount)
                 self.redraw()
                 self.refresh()
                 time.sleep(1)
+
+            self.storage.unmount()
+
+if __name__ == "__main__":
+    storage = Storage('/dev/sda', '/mnt/sysimage')
+    storage.add_partition(100, '/boot', 'ext4')
+    storage.add_partition(200, '/', 'ext4')
+    storage.add_partition(200, '/var', 'ext4')
+    storage.mount()
+    storage.unmount()

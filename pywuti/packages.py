@@ -17,7 +17,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=wildcard-import
-from pywuti.ui.base import *
-# pylint: disable=wildcard-import
-from pywuti.ui.widgets import *
+class Packages(object):
+    def __init__(self):
+        self._packages = {}
+        pass
+
+    def setup(self):
+        pass
+
+    def update(self):
+        pass
+
+    def download(self, package):
+        pass
+
+    def install(self, package):
+        pass
