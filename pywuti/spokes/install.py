@@ -21,6 +21,7 @@ import time
 
 from pywuti.ui import UIScreen, LabelWidget, TextboxWidget, ProcessWidget
 from pywuti.storage import Storage
+from pywuti.packages import Packages
 
 class InstallSpoke(UIScreen):
         def __init__(self, app, title = 'Package Installation'):
@@ -37,6 +38,7 @@ class InstallSpoke(UIScreen):
             self.addWidget(self._info, { "wrap": 1, 'padding': (0, 1, 0, 0)})
             
             self.setup_instroot()
+            self.setup_packages()
 
         def setup_instroot(self):
             self.storage = Storage('/dev/sda', '/mnt/sysimage')
@@ -44,16 +46,52 @@ class InstallSpoke(UIScreen):
             self.storage.add_partition(200, '/', 'ext4')
             self.storage.add_partition(200, '/var', 'ext4')
 
+        def setup_packages(self):
+            self.packages = Packages('/mnt/isodir', '/mnt/sysimage')
+
         def run(self, args = None):
             self.storage.mount()
+            self.packages.setup()
 
-            while self._amount < 100:
-                self._amount = self._amount + 10
-                self._process.setprocess(self._amount)
+            self.packages.update(['base-files',
+                'busybox',
+                'dnsmasq',
+                'dropbear',
+                'firewall',
+                'fstools',
+                'ip6tables',
+                'iptables',
+                'kernel',
+                'kmod-e1000',
+                'kmod-e1000e',
+                'libc',
+                'libgcc',
+                'mtd',
+                'netifd',
+                'odhcp6c',
+                'odhcpd',
+                'opkg',
+                'ppp',
+                'ppp-mod-pppoe',
+                'uci'])
+
+            total = self.packages.total()
+
+            for pkg in self.packages.packages:
+                package = self.packages.packages[pkg]
+                if not 'name' in package:
+                    print 'package %s not found' % pkg
+                    continue
+                self._amount = self._amount + 1
+                self._process.setprocess(int(self._amount * 100 / total))
+                self._label.setText("Packages completed %d of %d" % (self._amount, total))
+                self._info.setText("Installing %s_%s(%s)\n%s" % (package['name'],
+                    package['version'], package['size'], package['description']))
                 self.redraw()
                 self.refresh()
                 time.sleep(1)
 
+            self.packages.cleanup()
             self.storage.unmount()
 
 if __name__ == "__main__":
@@ -62,4 +100,30 @@ if __name__ == "__main__":
     storage.add_partition(200, '/', 'ext4')
     storage.add_partition(200, '/var', 'ext4')
     storage.mount()
+    
+    packages = Packages('/mnt/isodir', '/mnt/sysimage')
+    packages.setup()
+    packages.update(['base-files',
+                'busybox',
+                'dnsmasq',
+                'dropbear',
+                'firewall',
+                'fstools',
+                'ip6tables',
+                'iptables',
+                'kernel',
+                'kmod-e1000',
+                'kmod-e1000e',
+                'libc',
+                'libgcc',
+                'mtd',
+                'netifd',
+                'odhcp6c',
+                'odhcpd',
+                'opkg',
+                'ppp',
+                'ppp-mod-pppoe',
+                'uci'])
+    packages.cleanup()
+    
     storage.unmount()

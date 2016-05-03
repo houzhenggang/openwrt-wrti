@@ -34,10 +34,16 @@ class TextboxWidget(BaseWidget):
         BaseWidget.__init__(self)
         self._widget = snack.Textbox(width, 4, text)
 
+    def setText(self, text):
+        self._widget.setText(text)
+
 class LabelWidget(BaseWidget):
     def __init__(self, text):
         BaseWidget.__init__(self)
         self._widget = snack.Label(text)
+
+    def setText(self, text):
+        self._widget.setText(text)
 
 class ButtonWidget(BaseWidget):
     def __init__(self, text):
