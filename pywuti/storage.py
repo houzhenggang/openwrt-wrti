@@ -35,6 +35,17 @@ class Storage(object):
         self.mountOrder = []
         self.unmountOrder = []
 
+    def run_command(self, command):
+        if isinstance(command, basestring):
+            p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
+        else:
+            p = subprocess.Popen(command, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
+        p.communicate()
+
+        return p.returncode
+
     def add_partition(self, size, mountpoint, fstype = None):
         self.partitions.append({
             'size': size,
@@ -50,7 +61,7 @@ class Storage(object):
         logging.debug("Formatting disks")
         logging.debug("Initializing partition table for %s with %s layout" % (self._disk, 'msdos'))
         try:
-            rc = subprocess.call(["/usr/sbin/parted", "-s", self._disk, "mklabel", "%s" % 'msdos'])
+            rc = self.run_command(["/usr/sbin/parted", "-s", self._disk, "mklabel", "%s" % 'msdos'])
             if rc != 0:
                 logging.error("Error writing partition table on %s" % self._disk)
         except:
@@ -73,13 +84,13 @@ class Storage(object):
                 fstype = 'fat32'
 
             try:
-                rc = subprocess.call(["/usr/sbin/parted", "-a", "opt", "-s", self._disk, "mkpart",
+                rc = self.run_command(["/usr/sbin/parted", "-a", "opt", "-s", self._disk, "mkpart",
                                   p['type'], fstype, "%dM" % p['start'], "%dM" % (p['start'] + p['size'])])
             except:
                 logging.error("Error creating partition %s" % p['device'])
 
             try:
-                rc = subprocess.call(["/usr/sbin/mkfs.%s" % fstype, "-q", "-F", p['device']])
+                rc = self.run_command(["/usr/sbin/mkfs.%s" % fstype, "-q", "-F", p['device']])
             except:
                 logging.error("Error format partition %s" % p['device'])
 
@@ -104,7 +115,7 @@ class Storage(object):
                     break
 
             try:
-                subprocess.call(["/bin/umount", p['device']])
+                self.run_command(["/bin/umount", p['device']])
             except:
                 pass
 
@@ -127,6 +138,6 @@ class Storage(object):
             if not os.path.exists(rpath):
                 os.makedirs(rpath)
             try:
-                subprocess.call(["/bin/mount", "-t", p['fstype'], p['device'], rpath])
+                self.run_command(["/bin/mount", "-t", p['fstype'], p['device'], rpath])
             except:
                 pass
