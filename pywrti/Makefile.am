@@ -1,6 +1,6 @@
-# Makefile.am for wuti
 #
-# Copyright (C) 2016
+# Copyright (C) 2016 Openwrt x86_64 Unity Project
+#
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,6 @@ SUBDIRS = ui spokes
 MAINTAINERCLEANFILES = Makefile.in
 
 pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
-wutidir      = $(pkgpyexecdir)
+wrtidir      = $(pkgpyexecdir)
 
-wuti_PYTHON = $(wildcard $(srcdir)/*.py)
+wrti_PYTHON = $(wildcard $(srcdir)/*.py)

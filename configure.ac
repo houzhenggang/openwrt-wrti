@@ -18,16 +18,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-AC_INIT([wuti], [0.0.1], [weiyj.lk@gmail.com])
+AC_INIT([wrti], [0.0.1], [weiyj.lk@gmail.com])
 
 AM_INIT_AUTOMAKE([foreign])
 
 AM_PATH_PYTHON([2.7])
 
 AC_CONFIG_FILES([Makefile
-                 pywuti/Makefile
-                 pywuti/ui/Makefile
-                 pywuti/spokes/Makefile])
+                 pywrti/Makefile
+                 pywrti/ui/Makefile
+                 pywrti/spokes/Makefile])
 
 AC_OUTPUT
 

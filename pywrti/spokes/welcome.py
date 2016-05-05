@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pywuti.ui import UIScreen, TextWidget, ColumnWidget, ButtonWidget
+from pywrti.ui import UIScreen, TextWidget, ColumnWidget, ButtonWidget
 
 class WelcomeSpoke(UIScreen):
         def __init__(self, app, title):

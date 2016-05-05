@@ -17,23 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pywuti.ui import Application
-
-from pywuti.spokes.welcome import WelcomeSpoke
-from pywuti.spokes.storage import StorageSpoke
-from pywuti.spokes.install import InstallSpoke
-from pywuti.spokes.finish import FinishSpoke
-
-if __name__ == "__main__":
-    print("Starting installer, one moment...")
-
-    app = Application("Install Mode")
-    spoke = WelcomeSpoke(app, 'Openwrt')
-    storage = StorageSpoke(app, 'Storage')
-    install = InstallSpoke(app)
-    finsh = FinishSpoke(app)
-    app.schedule_screen(spoke)
-    app.schedule_screen(storage)
-    app.schedule_screen(install)
-    app.schedule_screen(finsh)
-    app.run()
+# pylint: disable=wildcard-import
+from pywrti.ui.base import *
+# pylint: disable=wildcard-import
+from pywrti.ui.widgets import *

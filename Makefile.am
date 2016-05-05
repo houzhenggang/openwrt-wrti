@@ -1,4 +1,3 @@
-# Makefile.am for wuti
 #
 # Copyright (C) 2016 Openwrt x86_64 Unity Project
 #
@@ -17,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = pywuti
+SUBDIRS = pywrti
 
 EXTRA_DIST =
 
@@ -26,4 +25,4 @@ MAINTAINERCLEANFILES = Makefile.in install-sh missing aclocal.m4 \
 
 CLEANFILES = *~
 
-dist_sbin_SCRIPTS = wuti.py
+dist_sbin_SCRIPTS = wrti.py

@@ -17,7 +17,20 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=wildcard-import
-from pywuti.ui.base import *
-# pylint: disable=wildcard-import
-from pywuti.ui.widgets import *
+import os
+
+from pywrti.ui import UIScreen, TextWidget, ButtonWidget
+
+class FinishSpoke(UIScreen):
+        def __init__(self, app, title = 'Complete'):
+            UIScreen.__init__(self, app, title)
+            
+        def setup(self):
+            wtext = TextWidget(40, 'Congratulations, your Openwrt installation is complete.\n'
+                               '\nPlease reboot to use the installed system.')
+            self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
+            self.addWidget(ButtonWidget('Reboot'))
+
+        def run(self, args = None):
+            UIScreen.run(self, args)
+            #os.system('/sbin/reboot')

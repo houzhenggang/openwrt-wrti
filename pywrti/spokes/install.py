@@ -19,9 +19,9 @@
 
 import time
 
-from pywuti.ui import UIScreen, LabelWidget, TextboxWidget, ProcessWidget
-from pywuti.storage import Storage
-from pywuti.packages import Packages
+from pywrti.ui import UIScreen, LabelWidget, TextboxWidget, ProcessWidget
+from pywrti.storage import Storage
+from pywrti.packages import Packages
 
 class InstallSpoke(UIScreen):
         def __init__(self, app, title = 'Package Installation'):
