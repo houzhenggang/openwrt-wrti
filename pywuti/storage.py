@@ -68,7 +68,7 @@ class Storage(object):
             logging.error("Error writing partition table on %s" % self._disk)
         
         logging.debug("Assigning partitions to disks")
-        offset = 0
+        offset = 2
         for n in range(len(self.partitions)):
             p = self.partitions[n]
             p['start'] = offset
