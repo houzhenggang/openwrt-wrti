@@ -33,9 +33,10 @@ class Application(object):
     STOP_MAINLOOP = False
     NOP = None
 
-    def __init__(self, title):
+    def __init__(self, wrti, title):
         self._screen = snack.SnackScreen()
         self._screens = []
+        self._wrti = wrti
 
     def __del__(self):
         if self._screen:
@@ -44,6 +45,10 @@ class Application(object):
     @property
     def screen(self):
         return self._screen
+
+    @property
+    def wrti(self):
+        return self._wrti
 
     def schedule_screen(self, ui, args=None):
         self._screens.insert(0, (ui, args, self.NOP))

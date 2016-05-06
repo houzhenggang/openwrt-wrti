@@ -22,8 +22,46 @@ import logging
 import subprocess
 
 class Device(object):
+    def __init__(self, name, size, model):
+        self._name = name
+        self._size = size
+        self._model = model
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def size(self):
+        return self._size
+
+    @property
+    def model(self):
+        return self._model
+
+class DeviceTree(object):
     def __init__(self):
-        pass
+        self._disks = []
+
+    def reset(self):
+        syspath = '/sys/class/block'
+        for dev in os.listdir(syspath):
+            if not os.path.exists(os.path.join(syspath, dev, 'device')):
+                continue
+            
+            size = 0
+            with open(os.path.join(syspath, dev, 'size')) as f:
+                size = f.read()
+
+            model = ''
+            with open(os.path.join(syspath, dev, 'device', 'model')) as f:
+                model = f.read()
+            
+            self._disks.append(Device(dev, size, model))
+
+    @property
+    def disks(self):
+        return self._disks
 
 class Storage(object):
     def __init__(self, disk, instroot):
@@ -34,7 +72,7 @@ class Storage(object):
 
         self.mountOrder = []
         self.unmountOrder = []
-
+        
     def run_command(self, command):
         if isinstance(command, basestring):
             p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,

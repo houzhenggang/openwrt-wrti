@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __all__ = ["TextWidget", "TextboxWidget", "LabelWidget", "ButtonWidget",
-           "ColumnWidget", "ListWidget", "ProcessWidget"]
+           "ColumnWidget", "ListWidget", "ProcessWidget", "CheckboxTreeWidget"]
 
 import snack
 
@@ -77,3 +77,14 @@ class ProcessWidget(BaseWidget):
 
     def setprocess(self, amount):
         self._widget.set(amount)
+
+class CheckboxTreeWidget(BaseWidget):
+    def __init__(self, height, scroll = 0, width = None, hide_checkbox = 0, unselectable = 0):
+        BaseWidget.__init__(self)
+        self._widget = snack.CheckboxTree(height, scroll, width, hide_checkbox, unselectable)
+    
+    def append(self, text, item = None, selected = 0):
+        self._widget.append(text, item, selected)
+    
+    def getSelection(self):
+        return self._widget.getSelection()
