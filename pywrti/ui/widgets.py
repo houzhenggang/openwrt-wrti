@@ -88,3 +88,34 @@ class CheckboxTreeWidget(BaseWidget):
     
     def getSelection(self):
         return self._widget.getSelection()
+
+class ButtonGroupWidget(ColumnWidget):
+    def __init__(self, buttons = ['OK', 'Cancel']):
+        ColumnWidget.__init__(self, len(buttons))
+
+        self.hostkeys = {}
+        self.list = []
+
+        for blist in buttons:
+            if isinstance(blist, basestring):
+                title = blist
+                value = title.lower()
+            elif len(blist) == 2:
+                (title, value) = blist
+            else:
+                (title, value, hotkey) = blist
+                self.hostkeys[hotkey] = value
+
+            btn = ButtonWidget(title)
+            self.list.append((btn.widget, value))
+            self.addWidget(btn)
+
+    def buttonPressed(self, result):
+        if result in self.hostkeys:
+            return self.hostkeys[result]
+
+        for (button, value) in self.list:
+            if result == button:
+                return value
+
+        return None
