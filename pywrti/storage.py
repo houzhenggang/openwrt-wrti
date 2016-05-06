@@ -42,6 +42,7 @@ class Device(object):
 class DeviceTree(object):
     def __init__(self):
         self._disks = []
+        self._devices = {}
 
     def reset(self):
         syspath = '/sys/class/block'
@@ -55,13 +56,18 @@ class DeviceTree(object):
 
             model = ''
             with open(os.path.join(syspath, dev, 'device', 'model')) as f:
-                model = f.read()
+                model = f.read().strip()
             
-            self._disks.append(Device(dev, size, model))
+            device = Device(dev, size, model)
+            self._disks.append(device)
+            self._devices[dev] = device
 
     @property
     def disks(self):
         return self._disks
+
+    def getdiskbyname(self, name):
+        return self._devices[name]
 
 class Storage(object):
     def __init__(self, disk, instroot):
@@ -122,7 +128,7 @@ class Storage(object):
                 fstype = 'fat32'
 
             try:
-                rc = self.run_command(["/usr/sbin/parted", "-a", "opt", "-s", self._disk, "mkpart",
+                rc = self.run_command(["/usr/sbin/parted", "-a", "optimal", "-s", self._disk, "mkpart",
                                   p['type'], fstype, "%dM" % p['start'], "%dM" % (p['start'] + p['size'])])
             except:
                 logging.error("Error creating partition %s" % p['device'])

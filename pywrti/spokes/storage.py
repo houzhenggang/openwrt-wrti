@@ -22,7 +22,7 @@ from pywrti.ui import UIScreen, TextWidget, ColumnWidget, ButtonWidget, ListWidg
 class StorageSpoke(UIScreen):
         def __init__(self, app, title):
             UIScreen.__init__(self, app, title)
-            
+
         def setup(self):
             wtext = TextWidget(40, 'Select Storage')
             self.addWidget(wtext, {'padding': (0, 0, 0, 1)})

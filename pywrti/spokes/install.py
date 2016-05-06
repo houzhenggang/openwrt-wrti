@@ -41,8 +41,17 @@ class InstallSpoke(UIScreen):
             self.setup_packages()
 
         def setup_instroot(self):
-            self.storage = Storage('/dev/sda', '/mnt/sysimage')
-            self.storage.add_partition(400, '/', 'ext4')
+            if len(self.app.wrti.instdisks) > 0:
+                disk = self.app.wrti.instdisks[0]
+            else:
+                disk = 'sda'
+
+            device = self.app.wrti.devicetree.getdiskbyname(disk)
+            totalsize = int(device.size) / 2048 - 1
+
+            self.storage = Storage('/dev/%s' % disk, '/mnt/sysimage')
+
+            self.storage.add_partition(totalsize, '/', 'ext4')
 
         def setup_packages(self):
             self.packages = Packages('/mnt/isodir', '/mnt/sysimage')

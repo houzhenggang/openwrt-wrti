@@ -18,7 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __all__ = ["TextWidget", "TextboxWidget", "LabelWidget", "ButtonWidget",
-           "ColumnWidget", "ListWidget", "ProcessWidget", "CheckboxTreeWidget"]
+           "ColumnWidget", "ListWidget", "ProcessWidget", "CheckboxTreeWidget",
+           "ButtonGroupWidget"]
 
 import snack
 

@@ -17,37 +17,51 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pywrti.ui import UIScreen, TextWidget, CheckboxTreeWidget, ColumnWidget, ButtonWidget
+import re
+
+from pywrti.ui import UIScreen, TextWidget, CheckboxTreeWidget, ButtonGroupWidget
 
 class PartitionSpoke(UIScreen):
-        def __init__(self, app, title = 'Partitioning Type'):
-            UIScreen.__init__(self, app, title)
-            
-        def setup(self):
-            wtext = TextWidget(65, _("Installation requires partitioning of "
-                                     "your hard drive.  The default layout is "
-                                     "suitable for most users.  Select what "
-                                     "space to use and which drives to use as "
-                                     "the install target."))
-            self.addWidget(wtext)
-            
-            wtext = TextWidget(55, _("Which drive(s) do you want to "
-                                     "use for this installation?"))
-            self.addWidget(wtext)
+    def __init__(self, app, title = 'Partitioning'):
+        UIScreen.__init__(self, app, title)
 
-            wlist = CheckboxTreeWidget(height = 4, scroll = 1)
-            
-            disks = self.app.wrti.devicetree
-            for disk in disks:
-                model = disk.model
-                sizestr = "%8.0f MB" % (disk.size / (1024 * 1024))
-                diskdesc = "%6s %s (%s)" % (disk.name, sizestr, model[:23])
-                
-                wlist.append(diskdesc, disk.name, 0)
+    def setup(self):
+        wtext = TextWidget(65, "Installation requires partitioning of your "
+                               "hard drive. Please choose which drive(s) "
+                               "you would like to use. WARNING! All data on "
+                               "the selected drive(s) will be lost.")
+        self.addWidget(wtext, {'padding': (0, 0, 0, 1)})
 
-            self.addWidget(wlist)
+        wtext = TextWidget(55, "Which drive(s) do you want to "
+                               "use for this installation?")
+        self.addWidget(wtext)
 
-            wcols = ColumnWidget(2)
-            wcols.addWidget(ButtonWidget('OK'))
-            wcols.addWidget(ButtonWidget('BACK'))
-            self.addWidget(wcols)
+        self._wlist = CheckboxTreeWidget(height = 2, scroll = 1)
+
+        disks = self.app.wrti.getDisks()
+        for disk in disks:
+            # skip cdrom
+            if re.match("sr[0-9]", disk.name):
+                continue
+
+            model = disk.model
+
+            size = int(disk.size)
+            if size >= 1024 * 2048:
+                sizestr = "%6.0f GB" % (size / (1024 * 2048))
+            else:
+                sizestr = "%6.0f MB" % (size / 2048)
+
+            diskdesc = "%6s %s (%s)" % (disk.name, sizestr, model[:23])
+
+            self._wlist.append(diskdesc, disk.name, 0)
+
+        self.addWidget(self._wlist, {'padding': (0, 0, 0, 1)})
+
+        self._btngrp = ButtonGroupWidget(['OK', 'BACK'])
+        self.addWidget(self._btngrp)
+
+    def run(self, args = None):
+        UIScreen.run(self, args)
+        self.app.wrti.instdisks = self._wlist.getSelection()
+        return True

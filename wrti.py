@@ -28,13 +28,23 @@ from pywrti.spokes.finish import FinishSpoke
 class Wrti(object):
     def __init__(self):
         self._devicetree = DeviceTree()
+        self._instdisks = []
 
     def getDisks(self):
         self._devicetree.reset()
+        return self._devicetree.disks
 
     @property
     def devicetree(self):
         return self._devicetree
+
+    @property
+    def instdisks(self):
+        return self._instdisks
+
+    @instdisks.setter
+    def instdisks(self, d):
+        self._instdisks = d
 
 if __name__ == "__main__":
     print("Starting installer, one moment...")
