@@ -1,6 +1,9 @@
+#!/usr/bin/python
 #
-# Copyright (C) 2016 Openwrt x86_64 Unity Project
+# Copyright 2005-2016 Red Hat, Inc.
+# Copyright 2016 Openwrt x86_64 Unity Project
 #
+# Chris Lumens <clumens@redhat.com>
 # Wei Yongjun <weiyj.lk@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -16,11 +19,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = ui spokes ks
+class KickstartObject(object):
+    def __init__(self, *args, **kwargs):
+        pass
 
-MAINTAINERCLEANFILES = Makefile.in
-
-pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
-wrtidir      = $(pkgpyexecdir)
-
-wrti_PYTHON = $(wildcard $(srcdir)/*.py)
+    def __str__(self):
+        return ""

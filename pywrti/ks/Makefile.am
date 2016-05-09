@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = ui spokes ks
+SUBDIRS =
 
 MAINTAINERCLEANFILES = Makefile.in
 
 pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
-wrtidir      = $(pkgpyexecdir)
+ksdir      = $(pkgpyexecdir)/ks
 
-wrti_PYTHON = $(wildcard $(srcdir)/*.py)
+ss_PYTHON = $(srcdir)/*.py
