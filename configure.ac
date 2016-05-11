@@ -27,7 +27,8 @@ AM_PATH_PYTHON([2.7])
 AC_CONFIG_FILES([Makefile
                  pywrti/Makefile
                  pywrti/ui/Makefile
-                 pywrti/spokes/Makefile])
+                 pywrti/spokes/Makefile
+                 pywrti/ks/Makefile])
 
 AC_OUTPUT
 

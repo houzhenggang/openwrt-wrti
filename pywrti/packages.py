@@ -26,7 +26,7 @@ class Packages(object):
         self._reporoot = reporoot
         self._instroot = instroot
 
-        self._source = '/dev/sr0'
+        #self._source = '/dev/sr0'
         self._repoconf = '/tmp/repositories.conf'
 
         self.packages = {}
@@ -43,11 +43,8 @@ class Packages(object):
         if not os.path.exists(self._reporoot):
             os.makedirs(self._reporoot)
         
-        if os.path.exists('/dev/sr0'):
-            subprocess.call(["/bin/mount", self._source, self._reporoot])
-
         self.setup_repositories()
-        
+
         if not os.path.exists(os.path.join(self._instroot, 'tmp')):
             os.makedirs(os.path.join(self._instroot, 'tmp'))
 
@@ -78,10 +75,10 @@ class Packages(object):
         self.execute_shell("%s update" % self._cmdbase)
 
     def cleanup(self):
-        try:
-            subprocess.call(["/bin/umount", self._reporoot])
-        except:
-            pass
+        #try:
+        #    subprocess.call(["/bin/umount", self._reporoot])
+        #except:
+        pass
 
     def execute_shell(self, args):
         if isinstance(args, basestring):

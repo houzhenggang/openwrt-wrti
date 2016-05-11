@@ -23,4 +23,4 @@ MAINTAINERCLEANFILES = Makefile.in
 pkgpyexecdir = $(pyexecdir)/py$(PACKAGE_NAME)
 ksdir      = $(pkgpyexecdir)/ks
 
-ss_PYTHON = $(srcdir)/*.py
+ks_PYTHON = $(srcdir)/*.py

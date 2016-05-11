@@ -24,105 +24,111 @@ from pywrti.storage import Storage
 from pywrti.packages import Packages
 
 class InstallSpoke(UIScreen):
-        def __init__(self, app, title = 'Package Installation'):
-            UIScreen.__init__(self, app, title)
-            self._amount = 0
-            
-        def setup(self):
-            self._process = ProcessWidget(65, 100)
-            #self._process.setprocess(20)
-            self.addWidget(self._process, {'padding': (0, 1, 0, 0)})
-            self._label = LabelWidget("Wating for processing install packages")
-            self.addWidget(self._label, {'padding': (0, 1, 0, 0)})
-            self._info = TextboxWidget(65, 4, "", wrap = 1)
-            self.addWidget(self._info, {'padding': (0, 1, 0, 0)})
-            
-            self.setup_instroot()
-            self.setup_packages()
+    def __init__(self, app, title = 'Package Installation'):
+        UIScreen.__init__(self, app, title)
+        self._amount = 0
 
-        def setup_instroot(self):
-            if len(self.app.wrti.instdisks) > 0:
-                disk = self.app.wrti.instdisks[0]
+    def setup(self):
+        self._process = ProcessWidget(65, 100)
+        #self._process.setprocess(20)
+        self.addWidget(self._process, {'padding': (0, 1, 0, 0)})
+        self._label = LabelWidget("Wating for processing install packages")
+        self.addWidget(self._label, {'padding': (0, 1, 0, 0)})
+        self._info = TextboxWidget(65, 4, "", wrap = 1)
+        self.addWidget(self._info, {'padding': (0, 1, 0, 0)})
+
+        self.setup_instroot()
+        self.setup_packages()
+
+    def setup_partition(self, total):
+        used = 0
+        grow = 0
+        left = 0
+
+        for part in self.app.wrti.partitions:
+            used += part.size
+            if part.grow:
+                grow += part.size
+
+        if total > used:
+            left= total - used
+
+        for part in self.app.wrti.partitions:
+            if part.grow:
+                size = part.size + int(left * part.size / grow)
             else:
-                disk = 'sda'
+                size = part.size
 
-            device = self.app.wrti.devicetree.getdiskbyname(disk)
-            totalsize = int(device.size) / 2048 - 1
+            self.storage.add_partition(size, part.mountpoint, part.fstype)
 
-            self.storage = Storage('/dev/%s' % disk, '/mnt/sysimage')
+    def setup_instroot(self):
+        self.app.wrti.mount_source()
+        self.app.wrti.parse_kickstart()
 
-            self.storage.add_partition(totalsize, '/', 'ext4')
+        if len(self.app.wrti.instdisks) > 0:
+            disk = self.app.wrti.instdisks[0]
+        else:
+            disk = 'sda'
 
-        def setup_packages(self):
-            self.packages = Packages('/mnt/isodir', '/mnt/sysimage')
+        device = self.app.wrti.devicetree.getdiskbyname(disk)
+        totalsize = int(device.size) / 2048 - 1
 
-        def install_package(self, package):
-            total = self.packages.total()
-            self._amount = self._amount + 1
-            self._process.setprocess(int(self._amount * 100 / total))
+        self.storage = Storage('/dev/%s' % disk, self.app.wrti.instroot)
+        self.setup_partition(totalsize)
 
-            self._label.setText("Packages completed %d of %d" % (self._amount, total))
-            self._info.setText("Installing %s_%s (%s)\n%s" % (package['name'],
-                                   package['version'], package['size'], package['description']))
-            self.redraw()
-            self.refresh()
+    def setup_packages(self):
+        self.packages = Packages(self.app.wrti.reporoot, self.app.wrti.instroot)
 
-            self.packages.install(package['name'])
+    def install_package(self, package):
+        total = self.packages.total()
+        self._amount = self._amount + 1
+        self._process.setprocess(int(self._amount * 100 / total))
 
-        def run(self, args = None):
-            self.storage.mount()
-            self.packages.setup()
+        self._label.setText("Packages completed %d of %d" % (self._amount, total))
+        self._info.setText("Installing %s_%s (%s)\n%s" % (package['name'],
+                               package['version'], package['size'], package['description']))
+        self.redraw()
+        self.refresh()
 
-            pkgs = ['base-files',
-                'busybox',
-                'dnsmasq',
-                'dropbear',
-                'firewall',
-                'fstools',
-                'ip6tables',
-                'iptables',
-                'kernel',
-                'kmod-e1000',
-                'kmod-e1000e',
-                'libc',
-                'libgcc',
-                'mtd',
-                'netifd',
-                'odhcp6c',
-                'odhcpd',
-                'opkg',
-                'ppp',
-                'ppp-mod-pppoe',
-                'uci',
-                'uclient-fetch']
-            
-            self.packages.update(pkgs)
+        self.packages.install(package['name'])
 
-            # install libc package
-            package = self.packages.packages['libc']
+    def cleanup(self):
+        self.app.wrti.umount_source()
+
+    def run(self, args = None):
+        self.storage.mount()
+        self.packages.setup()
+
+        pkgs = self.app.wrti.packages
+
+        self.packages.update(pkgs)
+
+        # install libc package
+        package = self.packages.packages['libc']
+        self.install_package(package)
+        # install kernel package
+        package = self.packages.packages['kernel']
+        self.install_package(package)
+
+        for pkg in self.packages.packages:
+            package = self.packages.packages[pkg]
+            if not 'name' in package:
+                print 'package %s not found' % pkg
+                continue
+
+            if pkg in ['libc', 'kernel']:
+                continue
+
             self.install_package(package)
-            # install kernel package
-            package = self.packages.packages['kernel']
-            self.install_package(package)
 
-            for pkg in self.packages.packages:
-                package = self.packages.packages[pkg]
-                if not 'name' in package:
-                    print 'package %s not found' % pkg
-                    continue
+            time.sleep(1)
 
-                if pkg in ['libc', 'kernel']:
-                    continue
+        self.packages.postinst()
+        self.packages.create_bootconfig()
 
-                self.install_package(package)
-
-                time.sleep(1)
-
-            self.packages.postinst()
-            self.packages.create_bootconfig()
-
-            self.packages.cleanup()
-            self.storage.unmount()
+        self.packages.cleanup()
+        self.storage.unmount()
+        self.cleanup()
 
 if __name__ == "__main__":
     storage = Storage('/dev/sda', '/mnt/sysimage')
