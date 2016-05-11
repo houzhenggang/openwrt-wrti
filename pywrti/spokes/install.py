@@ -126,8 +126,6 @@ class InstallSpoke(UIScreen):
 
             self.install_package(package)
 
-            time.sleep(1)
-
         self.packages.postinst()
         self.packages.create_bootconfig(self.storage.rootdev, self.storage.rootfs)
 

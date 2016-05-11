@@ -130,6 +130,8 @@ class Packages(object):
                 pkginfo['version'] = line[9:].strip()
             elif re.match("^Depends:", line):
                 pkginfo['depends'] = line[9:].split(', ')
+            elif re.match("^Status:", line):
+                pkginfo['status'] = line[8:].strip()
             elif re.match("^Section:", line):
                 pkginfo['section'] = line[9:].strip()
             elif re.match("^Size:", line):
@@ -172,7 +174,9 @@ class Packages(object):
             if package in ['kernel', 'libc']:
                 self.execute_shell("%s install %s" % (self._cmdbase, self.packages[package]['file']))
             else:
-                self.execute_shell("%s install %s" % (self._cmdbase, package))
+                pkginfo = self.opkg_info(package)
+                if not 'status' in pkginfo or pkginfo['status'].find('not-installed') != -1:
+                    self.execute_shell("%s install %s" % (self._cmdbase, package))
         else:
             package.remove('kernel')
             package.remove('libc')
