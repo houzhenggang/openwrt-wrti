@@ -25,12 +25,21 @@ class Packages(object):
     def __init__(self, reporoot, instroot):
         self._reporoot = reporoot
         self._instroot = instroot
+        self._bootpart = False
 
         #self._source = '/dev/sr0'
         self._repoconf = '/tmp/repositories.conf'
 
         self.packages = {}
         self.dependencies = []
+
+    @property
+    def bootpart(self):
+        return self._bootpart
+
+    @bootpart.setter
+    def bootpart(self, v):
+        self._bootpart = v
 
     def setup_repositories(self):
         s = ""
@@ -191,7 +200,11 @@ class Packages(object):
         self.execute_shell(cmd)
 
     def _create_grub_devices(self, dev):
-        grubdir = os.path.join(self._instroot, 'boot', 'grub')
+        if self._bootpart:
+            grubdir = os.path.join(self._instroot, 'boot', 'boot', 'grub')
+        else:
+            grubdir = os.path.join(self._instroot, 'boot', 'grub')
+
         if not os.path.exists(grubdir):
             os.makedirs(grubdir)
 
@@ -201,7 +214,13 @@ class Packages(object):
         cfg.close()
 
     def _install_grub(self, root):
-        grubdir = os.path.join(self._instroot, 'boot', 'grub')
+        if self._bootpart:
+            grubdir = os.path.join(self._instroot, 'boot', 'boot', 'grub')
+        else:
+            grubdir = os.path.join(self._instroot, 'boot', 'grub')
+
+        if not os.path.exists(grubdir):
+            os.makedirs(grubdir)
 
         cfg = "serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1 --rtscts=off\n"
         cfg += "terminal_input console serial; terminal_output console serial\n\n"
@@ -221,7 +240,13 @@ class Packages(object):
         self.execute_shell(cmd)
 
     def create_bootconfig(self, dev = '/dev/sda', root = '/dev/sda1'):
-        self.execute_shell("cp %s/isolinux/vmlinuz %s/boot/" % (self._reporoot, self._instroot))
+        if self._bootpart:
+            if not os.path.exists("%s/boot/boot/" % self._instroot):
+                os.makedirs("%s/boot/boot/" % self._instroot)
+
+            self.execute_shell("cp %s/isolinux/vmlinuz %s/boot/boot/" % (self._reporoot, self._instroot))
+        else:
+            self.execute_shell("cp %s/isolinux/vmlinuz %s/boot/" % (self._reporoot, self._instroot))
         
         self._create_grub_devices(dev)
 

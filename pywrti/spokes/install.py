@@ -78,6 +78,7 @@ class InstallSpoke(UIScreen):
 
     def setup_packages(self):
         self.packages = Packages(self.app.wrti.reporoot, self.app.wrti.instroot)
+        self.packages.bootpart = self.app.wrti.bootpart
 
     def install_package(self, package):
         total = self.packages.total()

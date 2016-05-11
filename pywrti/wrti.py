@@ -32,6 +32,7 @@ class Wrti(object):
         self._instroot = '/mnt/sysimage'
         self._imgdevice = 'sr0'
         self._kickstart = None
+        self._bootpart = False
 
         self.packages = []
         self.partitions = []
@@ -53,6 +54,10 @@ class Wrti(object):
     @property
     def instroot(self):
         return self._instroot
+
+    @property
+    def bootpart(self):
+        return self._bootpart
 
     @property
     def instdisks(self):
@@ -125,4 +130,8 @@ class Wrti(object):
 
             self.packages = self.ksdata.get("packages",  "packageList")
             self.partitions = self.ksdata.get("part", "partitions")
+
+            for part in self.partitions:
+                if part.mountpoint == '/boot':
+                    self._bootpart = True
 
