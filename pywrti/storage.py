@@ -73,12 +73,22 @@ class Storage(object):
     def __init__(self, disk, instroot):
         self._instroot = instroot
         self._disk = disk
+        self._rootdev = '/dev/sda'
+        self._rootfs = '/dev/sda1'
 
         self.partitions = []
 
         self.mountOrder = []
         self.unmountOrder = []
         
+    @property
+    def rootdev(self):
+        return self._rootdev
+
+    @property
+    def rootfs(self):
+        return self._rootfs
+
     def run_command(self, command):
         if isinstance(command, basestring):
             p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
@@ -119,6 +129,9 @@ class Storage(object):
             offset += p['size']
             p['device'] = "%s%d" % (self._disk, n + 1)
             p['type'] = 'primary'
+            if p['mountpoint'] == '/':
+                self._rootdev = self._disk
+                self._rootfs = p['device']
 
         logging.debug("Creating partitions")
         for p in self.partitions:

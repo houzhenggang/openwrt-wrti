@@ -186,17 +186,17 @@ class Packages(object):
         cmd = "rm -f %s/usr/lib/opkg/info/*.postinst" % self._instroot
         self.execute_shell(cmd)
 
-    def _create_grub_devices(self):
+    def _create_grub_devices(self, dev):
         grubdir = os.path.join(self._instroot, 'boot', 'grub')
         if not os.path.exists(grubdir):
             os.makedirs(grubdir)
 
-        devmap = "(hd%-d) /dev/%s\n" % (0, 'sda')
+        devmap = "(hd%-d) %s\n" % (0, dev)
         cfg = open("%s/device.map" % grubdir, "w")
         cfg.write(devmap)
         cfg.close()
 
-    def _install_grub(self):
+    def _install_grub(self, root):
         grubdir = os.path.join(self._instroot, 'boot', 'grub')
 
         cfg = "serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1 --rtscts=off\n"
@@ -205,7 +205,7 @@ class Packages(object):
         cfg += "set timeout=\"5\"\n"
         cfg += "set root='(hd0,msdos1)'\n\n"
         cfg += "menuentry \"OpenWrt\" {\n"
-        cfg += "    linux /boot/vmlinuz root=/dev/sda1 rootfstype=ext4 rootwait console=tty0 console=ttyS0,115200n8 noinitrd\n"
+        cfg += "    linux /boot/vmlinuz root=%s rootfstype=ext4 rootwait console=tty0 console=ttyS0,115200n8 noinitrd\n" % root
         cfg += "}\n"
 
         grub = open("%s/grub.cfg" % grubdir, "w")
@@ -216,9 +216,9 @@ class Packages(object):
         cmd += "-d /usr/lib/grub/i386-pc -r \"hd0,msdos1\" /dev/sda"
         self.execute_shell(cmd)
 
-    def create_bootconfig(self):
+    def create_bootconfig(self, dev = '/dev/sda', root = '/dev/sda1'):
         self.execute_shell("cp %s/isolinux/vmlinuz %s/boot/" % (self._reporoot, self._instroot))
         
-        self._create_grub_devices()
+        self._create_grub_devices(dev)
 
-        self._install_grub()
+        self._install_grub(root)

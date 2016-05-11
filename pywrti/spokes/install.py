@@ -129,7 +129,7 @@ class InstallSpoke(UIScreen):
             time.sleep(1)
 
         self.packages.postinst()
-        self.packages.create_bootconfig()
+        self.packages.create_bootconfig(self.storage.rootdev, self.storage.rootfs)
 
         self.packages.cleanup()
         self.storage.unmount()
