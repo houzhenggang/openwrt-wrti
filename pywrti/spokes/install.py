@@ -101,6 +101,11 @@ class InstallSpoke(UIScreen):
 
         pkgs = self.app.wrti.packages
 
+        # libc and kernel must be install
+        for pkg in ['libc', 'kernel']:
+            if not pkg in pkgs:
+                pkgs.append(pkg)
+
         self.packages.update(pkgs)
 
         # install libc package
@@ -110,7 +115,7 @@ class InstallSpoke(UIScreen):
         package = self.packages.packages['kernel']
         self.install_package(package)
 
-        for pkg in self.packages.packages:
+        for pkg in self.packages.dependencies:
             package = self.packages.packages[pkg]
             if not 'name' in package:
                 print 'package %s not found' % pkg

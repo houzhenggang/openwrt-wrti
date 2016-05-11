@@ -30,6 +30,7 @@ class Packages(object):
         self._repoconf = '/tmp/repositories.conf'
 
         self.packages = {}
+        self.dependencies = []
 
     def setup_repositories(self):
         s = ""
@@ -152,6 +153,9 @@ class Packages(object):
                     continue
                 self.check_opkg_info(dep)
         self.packages[package] = pkginfo
+
+        if not package in self.dependencies:
+            self.dependencies.append(package)
 
     def update(self, packages):
         for package in packages:
